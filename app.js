@@ -1,31 +1,43 @@
 const express = require('express');
-const app = express();
-
-const { engine } = require('express-handlebars');
-const bodyParser = require('body-parser');
-const mysql = require('mysql');
-
 require('dotenv').config();
-
+const app = express();
+const db = require('./server/models');
+const Role = db.Roles;
+const bodyParser = require('body-parser');
 
 //parsing middleware
 //parse application/x-wwww-form-urlencoded
-app.use(bodyParser.urlencoded({extended:false}));
+app.use(bodyParser.urlencoded({ extended: false }));
 //parse application/json
 app.use(bodyParser.json());
 //static files
 app.use(express.static('public'));
 
-//template Engine 
-app.engine('hbs' ,engine({ extname:'.hbs' }));
-app.set('view engine','hbs');
 
-app.get('', (req, res) => {
+db.sequelize.sync({ force: true }).then(() => initialize());
 
-    
-  res.render('home');
-});
+function initialize() {
 
+    Role.create({
+        id: 1,
+        name: "user"
+    });
+
+    Role.create({
+        id: 2,
+        name: "moderator"
+    });
+
+
+    Role.create({
+        id: 3,
+        name: "admin"
+    });
+}
+
+
+require("./server/routes/user.router")(app);
+require("./server/routes/user-information.route")(app);
 
 app.listen(6200);
 
