@@ -1,6 +1,5 @@
 module.exports = (sequelize, Sequelize) => {
 
-
     const UserInformation = sequelize.define('user-informations', {
         height: {
             type: Sequelize.STRING,

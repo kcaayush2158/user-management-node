@@ -4,8 +4,7 @@ const Role = db.role;
 const OP = db.sequelize.OP;
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-const { user } = require('../models');
-const { where } = require('sequelize');
+
 
 exports.signup = (req, res, next) => {
 
@@ -28,8 +27,6 @@ exports.signup = (req, res, next) => {
         res.status(500).send({ message: 'Unable to create the user' });
     }
 }
-
-
 
 exports.login = (req, res) => {
     const user = User.findOne({ where: { email: req.body.email } });
@@ -63,9 +60,6 @@ exports.login = (req, res) => {
         roles: authorities,
         accessToken: token
     });
-
-
-
 
 }
 

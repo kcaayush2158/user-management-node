@@ -1,7 +1,7 @@
 const express = require('express');
 require('dotenv').config();
 const app = express();
-const db = require('./server/models');
+const db = require("./models");
 const Role = db.Roles;
 const bodyParser = require('body-parser');
 
@@ -14,7 +14,7 @@ app.use(bodyParser.json());
 app.use(express.static('public'));
 
 
-db.sequelize.sync({ force: true }).then(() => initialize());
+db.sequelize.sync({ force: true }).then();
 
 function initialize() {
 
@@ -36,10 +36,14 @@ function initialize() {
 }
 
 
-require("./server/routes/user.router")(app);
-require("./server/routes/user-information.route")(app);
+require("./routes/user.router")(app);
+require("./routes/user-information.route")(app);
 
-app.listen(6200);
+// set port, listen for requests
+const PORT = process.env.PORT || 6200;
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}.`);
+});
 
 
 

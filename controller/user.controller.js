@@ -1,7 +1,8 @@
 const { QueryTypes } = require('sequelize');
+const { user } = require('../models');
 const db = require('../models');
-const User = db.User;
-const userInformation = db.UserInformation;
+const User = db.user;
+const userInformation = db.userInformation;
 
 exports.welcome = (req, res) => {
     res.json({ 'data': 'welcome' });
@@ -14,17 +15,22 @@ exports.createUser = async (req, res) => {
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         email: req.body.email,
-        password: req.body.password,
-        userId: {
-            id: req.body.userId.id,
-            height: req.body.userId.height,
-            phone: req.body.userId.weight,
-        }
+        password: req.body.password
     };
-    const data = await User.create(obj)
+
+    const data = await User.build(obj, { include: userInformation })
+
 
     if (data) {
-        await UserInformation.create(data.userId)
+        const userInformationObj = {
+            'id':data.id,
+            'hair': req.body.userInformationId.hair,
+            'height': req.body.userInformationId.height,
+            'phone': req.body.userInformationId.phone
+        }
+        const result = await userInformation.create(userInformationObj);
+        data.userInformationId = result.id;
+        await data.save();
         return res.json(data)
     } else {
         res.status(500).send({ message: err.message || "Some error occurred while creating the tutorial" });
@@ -53,17 +59,17 @@ exports.findAll = (req, res) => {
 
 exports.allAccess = (req, res) => {
     res.status(200).send("Public Content.");
-  };
-  
-  exports.userBoard = (req, res) => {
+};
+
+exports.userBoard = (req, res) => {
     res.status(200).send("User Content.");
-  };
-  
-  exports.adminBoard = (req, res) => {
+};
+
+exports.adminBoard = (req, res) => {
     res.status(200).send("Admin Content.");
-  };
-  
-  exports.moderatorBoard = (req, res) => {
+};
+
+exports.moderatorBoard = (req, res) => {
     res.status(200).send("Moderator Content.");
-  };
+};
 
